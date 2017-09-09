@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <base href="/">
+    <title>Shopify Winter 2018 Application</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="libs/bootstrap/dist/css/bootstrap.min.css">
+
+    <!-- JS -->
+    <script src="libs/angular/angular.min.js"></script>
+    <script src="libs/angular-route/angular-route.min.js"></script>
+
+    <!-- Angular files -->
+    <script src="controllers/app.controller.js"></script>
+    <script src="routes/appRoutes.js"></script>
+    <script src="app.js"></script>
+
+</head>
+<body ng-app="shopifyApp" ng-controller="MainController">
+    <div class="container">
+    
+        <!-- HEADER -->
+        <nav class="navbar navbar-inverse">
+            <div class="navbar-header">
+                <a class="navbar-brand" >Shopify Backend Application</a>
+            </div>
+        </nav>
+
+        <button type="button" class="btn btn-primary" ng-click="getConsumers()"> Click Me</button>
+        <br>
+        {{ fields }}
+
+    </div>
+    </body>
+</html>
