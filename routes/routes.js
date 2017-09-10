@@ -4,7 +4,8 @@ var request = require('request');
 // Dirty global variable
 var shame = []
 var index = 1
-var finalPage = 1
+var pagesCompleted = 0
+var totalPagesNeeded = 0
 
 module.exports = function(app) {
 
@@ -14,13 +15,14 @@ module.exports = function(app) {
     // Get data from the Shopify API end point
     app.get('/api/data', function(req, res) {
 
-        var totalAPIpages = 1
-        var queryExtension = ""
-        var jsonPageNum = 0
+        var cheat = ["1"]
 
         var query = 'https://backend-challenge-winter-2017.herokuapp.com/customers.json'
 
-        var responseObj = validateConsumers(query, false, res)
+        function(validateConsumers(query, false, res), )
+             
+    
+      
 
         /*
         console.log("THE RESPONSE OBJECT: " + JSON.stringify(responseObj))
@@ -37,8 +39,8 @@ module.exports = function(app) {
        
         console.log("FINAL RESPONSE OBJ: " + responseObj)
         */
-        console.log("SENDING THIS:" + responseObj)
-    res.send(responseObj)
+        //console.log("SENDING THIS:" + responseObj)
+   // res.send(responseObj)
     })
 
     // Handle all angular api requests
@@ -65,7 +67,7 @@ module.exports = function(app) {
                 // Figure out how many total API calls are needed to validate every consumer
                 totalPages = JSON.parse(body).pagination.total
                 var totalAPIpages = Math.ceil(totalPages / 5)
-                finalPage = totalAPIpages
+                totalPagesNeeded = totalAPIpages
       
       
                   // Invalid response object array. Will get optionally populated depending on invalid clients
@@ -92,12 +94,9 @@ module.exports = function(app) {
                       var customer = {}
                       var invalidFields = {}
       
-                      //console.log("Checking:" + customerList[i].name)
                       // Checking "name" field =================================================
                       //
                       //Check name field Length 
-                      //console.log("The first name: " + customerList[i].name)
-                      //console.log("bools: " + nameMin + nameMax)
                       if(customerList[i].name){
       
                           
@@ -105,7 +104,7 @@ module.exports = function(app) {
                           if(nameMin && nameMax){
                               if(customerList[i].name.length < nameMin || customerList[i].name.length > nameMax){
                                   invalidFields.name = true
-                                  console.log("banana1")
+                                 // console.log("banana1")
                               }
                           }
       
@@ -113,7 +112,7 @@ module.exports = function(app) {
                           else if(nameMin && !nameMax){
                               if(customerList[i].name.length < nameMin){
                                   invalidFields.name = true
-                                  console.log("banana2")
+                                 // console.log("banana2")
                               }
                           }
       
@@ -121,25 +120,25 @@ module.exports = function(app) {
                           else if(!nameMin && nameMax){
                               if(customerList[i].name.length > nameMax){
                                   invalidFields.name = true
-                                  console.log("banana3")
+                                 // console.log("banana3")
                               }
                           }
       
                       }else{
                           invalidFields.name = true
-                          console.log("banana4")
+                         // console.log("banana4")
                       }
       
                       // Checking namefield type
                       if((typeof customerList[i].name).localeCompare("string") !== 0){
                           invalidFields.name = true
-                          console.log("banana5: " + typeof customerList[i])
+                         // console.log("banana5: " + typeof customerList[i])
                       }
       
                       // Checking email field =============================================
                       if((typeof customerList[i].email).localeCompare("string") !== 0){
                         invalidFields.email = true
-                        console.log("banana6: " + typeof customerList[i])
+                        //console.log("banana6: " + typeof customerList[i])
                     }
       
                       // Checking age field ===============================================
@@ -150,7 +149,7 @@ module.exports = function(app) {
                           }
                       }else{
                           invalidFields.age = true
-                          console.log("Invalid age@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@: " + JSON.stringify(customerList[i]))
+                        //  console.log("Invalid age@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@: " + JSON.stringify(customerList[i]))
                       }
       
                       // Checking news letter fields =====================================
@@ -209,10 +208,19 @@ module.exports = function(app) {
                         shame.push(responseObj.invalid_customers[i])
                     }
                   
-                  console.log("The current shame: " + JSON.stringify(shame))
+                 
                   //console.log("The previousObj: " + JSON.stringify(previousObj))
-                  console.log("The curretn index: " + index)
-                  console.log("The total pages: " + totalPages)
+                 // console.log("The curretn index: " + index)
+                    pagesCompleted++
+                 //   console.log("Pages completed: " + pagesCompleted)
+                  // Check if every page has been looked at:
+                //  console.log("The current page: " + JSON.parse(body).pagination.current_page)
+                 // console.log("Comparing: " + pagesCompleted + " and " + totalPagesNeeded )
+                if(pagesCompleted === totalPagesNeeded){
+                    console.log("The current shame: " + JSON.stringify(shame))
+                     // res.send(shame)
+                    return shame
+                }
 
                 // Make more API calls if there are more than one page
                 if(((typeof previousObj).localeCompare("boolean") === 0) && (responseObj.totalPages > 1)){
@@ -233,25 +241,20 @@ module.exports = function(app) {
                             //console.log("The SCOPRE: " + scope)
                             // Make recursive calls to the validateConsumers function
                             index++
-                            console.log("THE INDEX BEFORE CALL **************************: " + index)
-                            
+                          //  console.log("THE INDEX BEFORE CALL **************************: " + index)
+
                             var query = 'https://backend-challenge-winter-2017.herokuapp.com/customers.json?page=' + index
-                            responseObj = validateConsumers(query, responseObj, res, function(index){
-                                console.log("I am a taco ---------------------------")
-                                
-                            })       
+                            responseObj = validateConsumers(query, responseObj, res)       
                                     
                         })
 
-                        //Return to the original function call
-                        console.log("This should be the end")
-                        res.send(responseObj)
+                     
                              
                 }else{
                     
                   //console.log("PANCAKES!!!!!!!!!!!!!!!!!!!!!!!!!!!! : " + JSON.stringify(previousObj))
                     // Only returned through recursion
-                    return previousObj
+                    //return previousObj
                 }
 
         }) // End of function
