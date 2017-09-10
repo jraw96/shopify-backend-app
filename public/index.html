@@ -33,7 +33,7 @@
         <br>
         
         <ul>
-            <li ng-repeat="customer in fields track by $index"> Id: {{customer.id}}, invalid_fields: {{customer.invalid_fields}}</li>
+            <li ng-repeat="customer in fields track by $index" | orderBy:'customer.id'> Id: {{customer.id}}, invalid_fields: {{customer.invalid_fields}}</li>
         </ul>
 
     </div>

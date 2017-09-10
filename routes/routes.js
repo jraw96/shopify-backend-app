@@ -6,41 +6,44 @@ var shame = []
 var index = 1
 var pagesCompleted = 0
 var totalPagesNeeded = 0
+var pumpkin = {}
+var cheat = {}
 
 module.exports = function(app) {
 
+    //validateConsumers(query, false, res)
+    function sendObject(){
+        console.log("sending object")
+        cheat.send(pumpkin)
+    }
+    
+
+    function callback(query, sendObject){
+        console.log("Inside callback")
+        pumpkin = validateConsumers(query, false)
+        sendObject()
+    }
+
+      
 
     // Incoming API calls ==========================================================
     // 
     // Get data from the Shopify API end point
     app.get('/api/data', function(req, res) {
 
-        var cheat = ["1"]
+        cheat = res
 
         var query = 'https://backend-challenge-winter-2017.herokuapp.com/customers.json'
 
-        function(validateConsumers(query, false, res), )
-             
+    // Reset global variables everytime the function is called
+    shame = []
+    index = 1
+    pagesCompleted = 0
+    totalPagesNeeded = 0
+
+      // Callback function that will return all invalid customers to the UI (front end)
+      validateConsumers(query, false, res)
     
-      
-
-        /*
-        console.log("THE RESPONSE OBJECT: " + JSON.stringify(responseObj))
-
-        // Make more API calls if there are more than one page
-        if(responseObj.totalPages > 1){
-            for(page of responseObj.totalPages){
-
-                query = 'https://backend-challenge-winter-2017.herokuapp.com/customers.json?page=' + 2
-                var responseObj = validateConsumers(query, responseObj)
-        
-            }
-        }
-       
-        console.log("FINAL RESPONSE OBJ: " + responseObj)
-        */
-        //console.log("SENDING THIS:" + responseObj)
-   // res.send(responseObj)
     })
 
     // Handle all angular api requests
@@ -52,7 +55,7 @@ module.exports = function(app) {
     // Local functions =============================================
     //
     // Validate every consumer according to the attached validation standards
-    function validateConsumers(query, previousObj, res){
+    function validateConsumers(query, previousObj, callback){
 
       
               request(query, function (error, response, body) {
@@ -217,9 +220,11 @@ module.exports = function(app) {
                 //  console.log("The current page: " + JSON.parse(body).pagination.current_page)
                  // console.log("Comparing: " + pagesCompleted + " and " + totalPagesNeeded )
                 if(pagesCompleted === totalPagesNeeded){
-                    console.log("The current shame: " + JSON.stringify(shame))
-                     // res.send(shame)
-                    return shame
+                    console.log("The final shame: " + JSON.stringify(shame))
+                   // res.send(shame)
+                    callback.send(shame)
+                    
+                    //return shame
                 }
 
                 // Make more API calls if there are more than one page
@@ -233,7 +238,7 @@ module.exports = function(app) {
                             scopeArray.push(JSON.stringify(i))
                         }
 
-                        console.log("SIZE OF SCOPE ARRAY ----------- " + scopeArray.length)
+                        //console.log("SIZE OF SCOPE ARRAY ----------- " + scopeArray.length)
 
                        // var tempArray = []
 
@@ -244,7 +249,7 @@ module.exports = function(app) {
                           //  console.log("THE INDEX BEFORE CALL **************************: " + index)
 
                             var query = 'https://backend-challenge-winter-2017.herokuapp.com/customers.json?page=' + index
-                            responseObj = validateConsumers(query, responseObj, res)       
+                            responseObj = validateConsumers(query, responseObj, callback)       
                                     
                         })
 
