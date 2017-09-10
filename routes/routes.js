@@ -8,41 +8,29 @@ var pagesCompleted = 0
 var totalPagesNeeded = 0
 var pumpkin = {}
 var cheat = {}
+var onetime = true
+var queryPageIndex = 0
 
 module.exports = function(app) {
 
-    //validateConsumers(query, false, res)
-    function sendObject(){
-        console.log("sending object")
-        cheat.send(pumpkin)
-    }
-    
+    app.get('/api/data/:url', function(req, res) {
 
-    function callback(query, sendObject){
-        console.log("Inside callback")
-        pumpkin = validateConsumers(query, false)
-        sendObject()
-    }
+        console.log("tacos")
+   
+        var query= JSON.stringify(req.query.url)
+        console.log("The url is: " + query)
 
-      
-
-    // Incoming API calls ==========================================================
-    // 
-    // Get data from the Shopify API end point
-    app.get('/api/data', function(req, res) {
-
-        cheat = res
-
-        var query = 'https://backend-challenge-winter-2017.herokuapp.com/customers.json'
+        console.log("CRAZY: " + req.params.url)
 
     // Reset global variables everytime the function is called
     shame = []
     index = 1
     pagesCompleted = 0
     totalPagesNeeded = 0
-
+    onetime = true
+    
       // Callback function that will return all invalid customers to the UI (front end)
-      validateConsumers(query, false, res)
+      validateConsumers(req.params.url, false, res)
     
     })
 
@@ -56,8 +44,24 @@ module.exports = function(app) {
     //
     // Validate every consumer according to the attached validation standards
     function validateConsumers(query, previousObj, callback){
+        console.log("yo dawgs")
+        //Check if the first query recieved was from a non-first page API query
+       
+        if(onetime){
+        queryPageIndex = (query[query.length - 1])
+        console.log("INSIDE ONE TIME: " + query)     
+        console.log("INSIDE ONE TIME: " + queryPageIndex)
+        onetime = false
+        if(( !isNaN(queryPageIndex))){
+                queryPageIndex=parseInt(queryPageIndex)
+                index = queryPageIndex
+                console.log("ONE TIME????????????: " + index)
+            }else{
+                queryPageIndex = 1
+            }
+        }
 
-      
+
               request(query, function (error, response, body) {
 
                 //console.log("The previousObj" + JSON.stringify(previousObj))
@@ -218,14 +222,19 @@ module.exports = function(app) {
                  //   console.log("Pages completed: " + pagesCompleted)
                   // Check if every page has been looked at:
                 //  console.log("The current page: " + JSON.parse(body).pagination.current_page)
-                 // console.log("Comparing: " + pagesCompleted + " and " + totalPagesNeeded )
-                if(pagesCompleted === totalPagesNeeded){
+
+                console.log("TotalpagesNeeded: " + totalPagesNeeded)
+                console.log("query page index: " + queryPageIndex)
+                 console.log("Comparing: " + pagesCompleted + " and " + (totalPagesNeeded - (queryPageIndex -1)) )
+                if(pagesCompleted ===(totalPagesNeeded - (queryPageIndex -1))){
                     console.log("The final shame: " + JSON.stringify(shame))
                    // res.send(shame)
                     callback.send(shame)
                     
                     //return shame
                 }
+
+
 
                 // Make more API calls if there are more than one page
                 if(((typeof previousObj).localeCompare("boolean") === 0) && (responseObj.totalPages > 1)){
@@ -234,11 +243,11 @@ module.exports = function(app) {
                        
                         // Create a mini-scope for each async request using an object loop. Convert the pages into an array of objects
                         var scopeArray = []
-                        for(var i = 0; i <= responseObj.totalPages - 2; i++){
+                        for(var i = 0; i <= responseObj.totalPages - (1 + queryPageIndex); i++){
                             scopeArray.push(JSON.stringify(i))
                         }
 
-                        //console.log("SIZE OF SCOPE ARRAY ----------- " + scopeArray.length)
+                        console.log("SIZE OF SCOPE ARRAY ----------- " + scopeArray.length)
 
                        // var tempArray = []
 
@@ -246,9 +255,10 @@ module.exports = function(app) {
                             //console.log("The SCOPRE: " + scope)
                             // Make recursive calls to the validateConsumers function
                             index++
-                          //  console.log("THE INDEX BEFORE CALL **************************: " + index)
+                            console.log("THE INDEX BEFORE CALL **************************: " + index)
 
                             var query = 'https://backend-challenge-winter-2017.herokuapp.com/customers.json?page=' + index
+                            console.log()
                             responseObj = validateConsumers(query, responseObj, callback)       
                                     
                         })

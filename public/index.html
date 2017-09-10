@@ -28,13 +28,25 @@
             </div>
         </nav>
 
-        <button type="button" class="btn btn-primary" ng-click="getConsumers()"> Validate those fields</button>
-        <br>
-        <br>
+        <button type="button" class="btn btn-primary" ng-click="getConsumers()" style="float: left"> Validate those fields</button>
         
-        <ul>
-            <li ng-repeat="customer in fields track by $index" | orderBy:'customer.id'> Id: {{customer.id}}, invalid_fields: {{customer.invalid_fields}}</li>
+        <div class="form-group">
+                <h4 style="float: left; margin-left: 10px; margin-right: 8px">From: </h4>
+                <input type="text" ng-model="query" class="form-control" style="float: left; width: 500px; margin-bottom: -2px">
+        </div>
+
+        <br><br>
+ 
+        <div ng-show="UItoggle" class="well">
+        
+        { <br>
+            "invalid-customers":[ <br>
+        <ul style="list-style-type: none;">
+            <li ng-init="increment()" ng-repeat="customer in fields | orderBy:'id'" >{ "id": {{customer.id}}, "invalid_fields": {{customer.invalid_fields}} }<span ng-show="customer.showComma">,</span></li>
         </ul>
+        <span style="margin-right: 40px"></span>] <br>
+        }
+        </div>
 
     </div>
     </body>
