@@ -9,8 +9,8 @@ app.controller('MainController', function($scope, $http) {
     $scope.getConsumers = function(){
        $http.get('/api/data').then(function(response){
 
-        console.log(JSON.stringify(response.data))
-        $scope.fields = JSON.stringify(response.data.customers)
+        console.log(JSON.stringify(response.data.invalid_customers))
+        $scope.fields = (response.data.invalid_customers)
 
 
 

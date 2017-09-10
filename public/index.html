@@ -28,9 +28,13 @@
             </div>
         </nav>
 
-        <button type="button" class="btn btn-primary" ng-click="getConsumers()"> Click Me</button>
+        <button type="button" class="btn btn-primary" ng-click="getConsumers()"> Validate those fields</button>
         <br>
-        {{ fields }}
+        <br>
+        
+        <ul>
+            <li ng-repeat="customer in fields track by $index"> Id: {{customer.id}}, invalid_fields: {{customer.invalid_fields}}</li>
+        </ul>
 
     </div>
     </body>
