@@ -1,4 +1,4 @@
-// public/js/appRoutes.js
+// public/routes/appRoutes.js
     angular.module('appRoutes', []).config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
 
     $routeProvider

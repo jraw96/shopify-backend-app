@@ -1,14 +1,16 @@
 // Single page app controller
 
+// Bind angular app with controller
 var app = angular.module('MainCtrl', [])
 
 app.controller('MainController', function($scope, $http) {
-    $scope.tagline = "your boy Edmond Dantes";
 
+    // Front end manipulation variables.
     $scope.UItoggle = false
     $scope.showComma = true
     $scope.bullets = 0
 
+    // Default API queury that appears on screen
     $scope.query = "https://backend-challenge-winter-2017.herokuapp.com/customers.json"
 
     // Get the invalid consumer list from the backends
@@ -18,15 +20,11 @@ app.controller('MainController', function($scope, $http) {
         $scope.showComma = true
         $scope.bullets = 0
 
-
-
         // Encorde url to send to backend: 
         var url = encodeURIComponent($scope.query)
-        let params = new URLSearchParams; //Send the account ID as a paramter in the get request
-        params.set('param1',url);
 
-        console.log("Sending this: " + url)
-       $http.get('/api/data/' + url).then(function(response){
+        // Send call to backend
+        $http.get('/api/data/' + url).then(function(response){
 
         // Reveal the list of consumers after recieving the backend response
         $scope.UItoggle = true
@@ -34,7 +32,6 @@ app.controller('MainController', function($scope, $http) {
 
         // Set the total size of the invalid consumers
         $scope.size = response.data.length
-
 
          // Display a comma after every JSON object except the last
        $scope.increment = function(){
@@ -46,9 +43,6 @@ app.controller('MainController', function($scope, $http) {
                 response.data[$scope.bullets -1].showComma = false
             }
         }
-
        })
-    }
-
-      
+    }    
 });

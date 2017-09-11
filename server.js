@@ -1,4 +1,4 @@
-// Server =============================================
+// server.js =============================================
 
 // Importing dependencies
 var express        = require('express')
